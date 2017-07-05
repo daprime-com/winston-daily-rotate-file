@@ -80,6 +80,7 @@ var DailyRotateFile = module.exports = function (options) {
   this.prepend = options.prepend || false;
   this.localTime = options.localTime || false;
   this.zippedArchive = options.zippedArchive || false;
+  this.archivedFolder = options.archivedFolder || false;
 
   if (this.json) {
     this.stringify = options.stringify;
@@ -580,12 +581,15 @@ DailyRotateFile.prototype._createStream = function () {
       self._archive = false;
       if (logfile && fs.existsSync(String(logfile))) {
         var gzip = zlib.createGzip();
+        var archivedFile = self.archivedFolder ? path.resolve(self.archivedFolder, path.basename(logfile)) : logfile + '.gz';
 
         var inp = fs.createReadStream(String(logfile));
-        var out = fs.createWriteStream(logfile + '.gz');
+        var out = fs.createWriteStream(archivedFile);
 
         inp.pipe(gzip).pipe(out);
-        fs.unlinkSync(String(logfile));
+		try {
+			fs.unlinkSync(String(logfile));
+		} catch (e) {}
       }
     }
 
