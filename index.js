@@ -581,7 +581,9 @@ DailyRotateFile.prototype._createStream = function () {
       self._archive = false;
       if (logfile && fs.existsSync(String(logfile))) {
         var gzip = zlib.createGzip();
-        var archivedFile = self.archivedFolder ? path.resolve(self.archivedFolder, path.basename(logfile)) : logfile + '.gz';
+        var archivedFile = self.archivedFolder ? path.resolve(self.archivedFolder, path.basename(logfile)) : logfile;
+
+        archivedFile += '.gz';
 
         var inp = fs.createReadStream(String(logfile));
         var out = fs.createWriteStream(archivedFile);
